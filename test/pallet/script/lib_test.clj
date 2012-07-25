@@ -210,4 +210,6 @@
   (mktest :debian etc-default "/etc/default")
   (mktest :centos etc-default "/etc/sysconfig")
   (mktest :fedora etc-default "/etc/sysconfig")
-  (mktest :os-x etc-default "/etc/defaults"))
+  (mktest :os-x etc-default "/etc/defaults")
+  (mktest :system-v etc-default "/etc/defaults")
+  (mktest :smartos etc-default "/etc/defaults"))

@@ -429,7 +429,7 @@ Content can also be copied from a blobstore.
        (packages session
          :yum [\"git\" \"git-email\"]
          :aptitude [\"git-core\" \"git-email\"])"
-  [& {:keys [yum aptitude pacman brew] :as options}]
+  [& {:keys [yum aptitude pacman brew pkgin] :as options}]
   (phase-pipeline packages {}
     [packager packager]
     (map package (options packager))))

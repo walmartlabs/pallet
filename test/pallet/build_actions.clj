@@ -127,4 +127,6 @@
 (def ubuntu-session
   (build-session {:server {:image {:os-family :ubuntu}}}))
 (def centos-session
-  (build-session {:server {:image {:os-family :centos}}}))
+     (build-session {:server {:image {:os-family :centos}}}))
+(def smartos-session
+     (build-session {:server {:image {:os-family :smartos}}}))

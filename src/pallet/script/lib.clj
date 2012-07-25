@@ -18,7 +18,8 @@
    translations))
 
 (script/defscript exit [value])
-(script/defimpl exit :default [value]
+(script/defimpl exit :default
+  [value]
   (exit ~value))
 
 (script/defscript xargs [script])
@@ -539,6 +540,28 @@
 (script/defimpl list-installed-packages [#{:aptitude}] [& options]
   (aptitude search (quoted "~i")))
 
+;;; pkgin
+(script/defimpl update-package-list [#{:pkgin}] [& {:keys [] :as options}]
+  (pkgin -y update ~(stevedore/option-args options)))
+
+(script/defimpl upgrade-all-packages [#{:pkgin}] [& options]
+  (pkgin -y full-upgrade ~(stevedore/option-args options)))
+
+(script/defimpl install-package [#{:pkgin}] [package & options]
+  (pkgin -y install ~(stevedore/option-args options) ~package))
+
+(script/defimpl upgrade-package [#{:pkgin}] [package & options]
+  (pkgin -y upgrade ~(stevedore/option-args options) ~package))
+
+(script/defimpl remove-package [#{:pkgin}] [package & options]
+  (pkgin -y remove ~(stevedore/option-args options) ~package))
+
+(script/defimpl purge-package [#{:pkgin}] [package & options]
+  (pkgin -y clean ~(stevedore/option-args options) ~package))
+
+(script/defimpl list-installed-packages [#{:pkgin}] [& options]
+  (pkgin list))
+
 ;;; apt
 (script/defimpl update-package-list [#{:apt}] [& {:keys [] :as options}]
   (apt-get -qq ~(stevedore/map-to-arg-string options) update))
@@ -737,7 +760,7 @@
   "/etc/default")
 (script/defimpl etc-default [#{:centos :rhel :amzn-linux :fedora}] []
   "/etc/sysconfig")
-(script/defimpl etc-default [#{:os-x :darwin}] []
+(script/defimpl etc-default [#{:os-x :darwin :smartos :system-v}] []
   "/etc/defaults")
 
 (script/defscript log-root [])

@@ -76,6 +76,24 @@
              (package "maven2" :action :upgrade)
              (package "git" :action :remove)
              (package "ruby" :action :remove :purge true))))))
+    (testing "pkgin"
+    (is (= (first
+            (build-actions
+             {:server {:tag :n :image {:os-family :smartos}}}
+             (exec-checked-script
+              "Packages"
+              "pkgin install -y java rubygems"
+              "pkgin remove -y git ruby"
+              "pkgin upgrade -y maven2"
+              (pkgin list))))
+           (first
+            (build-actions
+             {:server {:tag :n :image {:os-family :smartos}}}
+             (package "java" :action :install)
+             (package "rubygems")
+             (package "maven2" :action :upgrade)
+             (package "git" :action :remove)
+             (package "ruby" :action :remove :purge true))))))
   (testing "pacman"
     (is (= (first
             (build-actions
