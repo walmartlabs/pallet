@@ -122,6 +122,10 @@
   (testing "system on rh"
     (script/with-script-context [:centos]
       (is (= "/usr/sbin/useradd -r user1"
+             (script (~create-user "user1"  ~{:system true}))))))
+  (testing "system on smartos"
+    (script/with-script-context [:smartos]
+      (is (= "/usr/sbin/useradd -r user1"
              (script (~create-user "user1"  ~{:system true})))))))
 
 (deftest modify-user-test

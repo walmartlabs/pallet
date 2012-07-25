@@ -33,7 +33,15 @@
              "/sbin/chkconfig tomcat on --level 2345")))
          (first (build-actions
                     {:server {:node (make-node "n" :os-family :centos)}}
-                  (service "tomcat" :action :enable))))))
+		    (service "tomcat" :action :enable)))))
+  (is (= (first
+          (build-actions {}
+            (exec-checked-script
+             "Configure service tomcat"
+             "/usr/sbin/svcadm enable tomcat")))
+         (first (build-actions
+                    {:server {:node (make-node "n" :os-family :smartos)}}
+		    (service "tomcat" :action :enable))))))
 
 (deftest with-restart-test
   (is (=

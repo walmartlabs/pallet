@@ -12,6 +12,11 @@
 (def prolog (str "#!/usr/bin/env bash\n"))
 (def epilog "\nexit $?")
 
+(defn sudo-cmd-dir [items]
+  (cond
+   (= :smartos (some #{:smartos} items)) "/opt/local/bin/sudo"
+   :else "/usr/bin/sudo"))
+
 (defmulti interpreter
   "The interprester used to run a script."
   (fn [{:keys [language]}] language))
@@ -25,20 +30,25 @@
   [#{:centos-5.3 :os-x :darwin :debian :fedora}]
   []
   ("/usr/bin/sudo"))
+(script/defimpl sudo-no-password
+  [#{:smartos :system-v}]
+  []
+  ("/opt/local/bin/sudo"))
 
 (defn sudo-cmd-for
   "Construct a sudo command prefix for the specified user."
   [user]
-  (if (or (and (= (:username user) "root") (not (:sudo-user user)))
-          (:no-sudo user))
-    nil
-    (str
-     (if-let [pw (:sudo-password user)]
-       (str "echo \"" (or (:password user) pw) "\" | /usr/bin/sudo -S")
-       (stevedore/script (~sudo-no-password)))
-     (if-let [su (:sudo-user user)]
-       (str " -u " su)
-       ""))))
+  (let [sudodir (sudo-cmd-dir pallet.script/*script-context*)] 
+    (if (or (and (= (:username user) "root") (not (:sudo-user user)))
+	    (:no-sudo user))
+      nil
+      (str
+       (if-let [pw (:sudo-password user)]
+	 (str "echo \"" (or (:password user) pw) "\" | " sudodir " -S")
+	 (stevedore/script (~sudo-no-password)))
+       (if-let [su (:sudo-user user)]
+	 (str " -u " su)
+	 "")))))
 
 (defmulti prefix
   "The executable used to prefix the interpreter (eg. sudo, chroot, etc)."

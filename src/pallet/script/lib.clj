@@ -173,7 +173,7 @@
         (md5sum
          ~(stevedore/map-to-arg-string {:quiet quiet :check check})
          @(basename ~file))) ")"))
-(script/defimpl md5sum-verify [#{:centos :debian :amzn-linux :rhel :fedora}]
+(script/defimpl md5sum-verify [#{:centos :debian :amzn-linux :rhel :smartos :fedora}]
   [file & {:keys [quiet check] :or {quiet true check true} :as options}]
   ("(" (chain-and
         (cd @(dirname ~file))
@@ -383,7 +383,7 @@
         stevedore/map-to-arg-string)
    ~username))
 
-(script/defimpl create-user [#{:rhel :centos :amzn-linux :fedora}]
+(script/defimpl create-user [#{:rhel :centos :amzn-linux :smartos :fedora}]
   [username options]
   ("/usr/sbin/useradd"
    ~(-> options
@@ -403,7 +403,7 @@
           (update-in [:groups] group-seq->string))))
    ~username))
 
-(script/defimpl modify-user [#{:rhel :centos :amzn-linux :fedora}]
+(script/defimpl modify-user [#{:rhel :centos :amzn-linux :fedora :smartos}]
   [username options]
   ("/usr/sbin/usermod"
    ~(-> options
@@ -442,7 +442,7 @@
 (script/defimpl create-group :default [groupname options]
   ("/usr/sbin/groupadd" ~(stevedore/map-to-arg-string options) ~groupname))
 
-(script/defimpl create-group [#{:rhel :centos :amzn-linux :fedora}]
+(script/defimpl create-group [#{:rhel :centos :amzn-linux :fedora :smartos}]
   [groupname options]
   ("/usr/sbin/groupadd"
    ~(-> options
@@ -720,6 +720,16 @@
                      stop ~(:sequence-stop options (:sequence-start options 20))
                      "."))))
 
+
+(script/defimpl configure-service [#{:smartos}] [name action options]
+  ~(condp = action
+       :disable (stevedore/script ("/usr/sbin/svcadm" disable ~name))
+       :enable (stevedore/script
+                ("/usr/sbin/svcadm" enable ~name))
+       :start-stop (stevedore/script ;; start/stop
+                    ("/usr/sbin/svcadm"
+                     ~name restart))))
+
 (def ^{:private true} chkconfig-default-options
   [20 2 3 4 5])
 
@@ -782,6 +792,7 @@
 (script/defscript etc-init [])
 (script/defimpl etc-init :default [] "/etc/init.d")
 (script/defimpl etc-init [:pacman] [] "/etc/rc.d")
+(script/defimpl etc-init [:pkgin] [] "/var/svc/manifest")
 
 ;; Some of the packagers, like brew, are "add-ons" in the sense that they are
 ;; outside of the base system.  These paths refer to locations of packager

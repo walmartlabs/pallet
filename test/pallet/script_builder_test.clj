@@ -13,6 +13,12 @@
  :each
  test-utils/with-bash-script-language)
 
+(deftest sudo-cmd-dir-test
+  (testing "sudo cmd default"
+    (is (= (sudo-cmd-dir [:default]) "/usr/bin/sudo")))
+  (testing "sudo cmd smartos"
+    (is (= (sudo-cmd-dir [:smartos]) "/opt/local/bin/sudo"))))
+
 (deftest sudo-cmd-for-test
   (script/with-script-context [:ubuntu]
     (let [no-pw "/usr/bin/sudo -n"
@@ -28,6 +34,17 @@
   (script/with-script-context [:centos-5.3]
     (let [no-pw "/usr/bin/sudo"
           pw "echo \"fred\" | /usr/bin/sudo -S"
+          no-sudo nil]
+      (is (= no-pw (sudo-cmd-for {:username "fred"})))
+      (is (= pw (sudo-cmd-for {:username "fred" :sudo-password "fred"})))
+      (is (= no-pw
+             (sudo-cmd-for
+              {:username "fred" :password "fred" :sudo-password false})))
+      (is (= no-sudo (sudo-cmd-for {:username "root"})))
+      (is (= no-sudo (sudo-cmd-for {:username "fred" :no-sudo true})))))
+  (script/with-script-context [:smartos]
+    (let [no-pw "/opt/local/bin/sudo"
+          pw "echo \"fred\" | /opt/local/bin/sudo -S"
           no-sudo nil]
       (is (= no-pw (sudo-cmd-for {:username "fred"})))
       (is (= pw (sudo-cmd-for {:username "fred" :sudo-password "fred"})))
