@@ -675,13 +675,13 @@ only specified files or directories, use the :extract-files option.
          :yum [\"git\" \"git-email\"]
          :aptitude [\"git-core\" \"git-email\"])"
   {:pallet/plan-fn true}
-  [& {:keys [yum aptitude pacman brew] :as options}]
+  [& {:keys [yum aptitude pacman brew pkgin] :as options}]
   (phase-context packages {}
     (let [packager (packager)]
       (doseq [p (or (options packager)
                     (when (#{:apt :aptitude} packager)
                       (options (first (disj #{:apt :aptitude} packager)))))]
-        (apply-map package p (dissoc options :aptitude :brew :pacman :yum))))))
+        (apply-map package p (dissoc options :aptitude :brew :pacman :yum :pkgin))))))
 
 (defaction package-manager
   "Package manager controls.

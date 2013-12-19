@@ -73,4 +73,9 @@
             (~lib/create-group "group11" {:r true})))
          (first (build-actions
                     {:server {:image {:os-family :centos}}}
+		    (group "group11" :action :create :system true))))))
+  (testing "system on smartos"
+    (is (="if ! ( getent group group11 ); then /usr/sbin/groupadd -r group11;fi\n"
+         (first (build-actions
+                    {:server {:image {:os-family :smartos}}}
                   (group "group11" :action :create :system true)))))))

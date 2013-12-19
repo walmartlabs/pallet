@@ -18,11 +18,17 @@ infix-operators
 (defn prolog []  (str "#!" (fragment (env)) " bash\n"))
 (def epilog "\nexit $?")
 
+(defn sudo-cmd-dir [items]
+  (cond
+   (= :smartos (some #{:smartos} items)) "/opt/local/bin/sudo"
+   :else "/usr/bin/sudo"))
+
 (defmulti interpreter
   "The interprester used to run a script."
   (fn [{:keys [language]}] language))
 (defmethod interpreter :default [_] nil)
-(defmethod interpreter :bash [_] (split (fragment (bash)) #" +"))
+(defmethod interpreter :bash [_]
+  (split (fragment (bash)) #" +"))
 
 (defn sudo-cmd-for
   "Construct a sudo command prefix for the specified user."

@@ -130,6 +130,7 @@ Provider specific options may also be passed."
       (derive :suse-base :linux)
       (derive :bsd-base :linux)
       (derive :gentoo-base :linux)
+      (derive :system-v :linux)
 
       ;; distibutions
       (derive :centos :rh-base)
@@ -145,7 +146,9 @@ Provider specific options may also be passed."
       (derive :arch :arch-base)
       (derive :gentoo :gentoo-base)
       (derive :darwin :bsd-base)
-      (derive :os-x :bsd-base)))
+      (derive :os-x :bsd-base)
+
+      (derive :smartos :system-v)))
 
 (defmacro defmulti-os
   "Defines a defmulti used to abstract over the target operating system. The
@@ -176,7 +179,8 @@ Provider specific options may also be passed."
                 {:os :gentoo-base} :portage
                 {:os :suse-base} :zypper
                 {:os :os-x} :brew
-                {:os :darwin} :brew}))
+                {:os :darwin} :brew
+                {:os :smartos} :pkgin}))
 
 (defn packager-for-os
   "Package manager"
@@ -201,6 +205,7 @@ Provider specific options may also be passed."
       (#{:suse} os-family) :suse
       (#{:gentoo} os-family) :gentoo
       (#{:darwin :os-x} os-family) :os-x
+      (#{:smartos} os-family) :system-v
       :else (throw
              (ex-info
               (format "Unknown base-distribution for %s - target is %s"

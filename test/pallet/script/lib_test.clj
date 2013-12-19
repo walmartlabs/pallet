@@ -166,6 +166,11 @@ fi)}}}"
     (script/with-script-context [:centos]
       (is (script-no-comment=
            "/usr/sbin/useradd -r user1"
+           (script (~create-user "user1"  ~{:system true}))))))
+  (testing "system on smartos"
+    (script/with-script-context [:smartos]
+      (is (script-no-comment=
+           "/usr/sbin/useradd -r user1"
            (script (~create-user "user1"  ~{:system true})))))))
 
 (deftest modify-user-test
@@ -288,7 +293,9 @@ fi)}}}"
   (mktest :debian etc-default "/etc/default")
   (mktest :centos etc-default "/etc/sysconfig")
   (mktest :fedora etc-default "/etc/sysconfig")
-  (mktest :os-x etc-default "/etc/defaults"))
+  (mktest :os-x etc-default "/etc/defaults")
+  (mktest :system-v etc-default "/etc/defaults")
+  (mktest :smartos etc-default "/etc/defaults"))
 
 (deftest config-root-test
   (mktest :ubuntu config-root "/etc"))

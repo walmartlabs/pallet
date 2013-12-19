@@ -139,7 +139,8 @@
   (build-session {:server {:image {:os-family :ubuntu}}}))
 (def centos-session
   (build-session {:server {:image {:os-family :centos}}}))
-
+(def smartos-session
+  (build-session {:server {:image {:os-family :smartos}}}))
 (defn action-phase-errors
   [result]
   (filter :error (:result result)))

@@ -43,6 +43,19 @@
               (sudo-cmd-for
                {:username "fred" :password "fred" :sudo-password false}))))
       (is (= no-sudo (sudo-cmd-for {:username "root"})))
+      (is (= no-sudo (sudo-cmd-for {:username "fred" :no-sudo true})))))
+  (script/with-script-context [:smartos]
+    (let [no-pw "/opt/local/bin/sudo"
+          pw "echo 'fred' | /opt/local/bin/sudo -S"
+          no-sudo nil]
+      (is (= no-pw
+             (remove-source-line-comments (sudo-cmd-for {:username "fred"}))))
+      (is (= pw (sudo-cmd-for {:username "fred" :sudo-password "fred"})))
+      (is (= no-pw
+             (remove-source-line-comments
+              (sudo-cmd-for
+               {:username "fred" :password "fred" :sudo-password false}))))
+      (is (= no-sudo (sudo-cmd-for {:username "root"})))
       (is (= no-sudo (sudo-cmd-for {:username "fred" :no-sudo true}))))))
 
 (deftest build-code-test
