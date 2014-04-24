@@ -1,4 +1,4 @@
-(defproject com.palletops/pallet "0.8.0-SNAPSHOT"
+(defproject com.palletops/pallet "0.8.0-AM-SNAPSHOT"
   :description
   "DevOps for the JVM.
 
@@ -14,7 +14,7 @@ unprecedented level of customization."
 
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/core.incubator "0.1.0"]
-                 [org.clojure/tools.logging "0.2.0"]
+                 [org.clojure/tools.logging "0.2.6"]
                  [org.clojure/tools.macro "0.1.1"]
                  [org.clojure/tools.cli "0.2.2"]
                  [org.clojure/algo.monads "0.1.0"]

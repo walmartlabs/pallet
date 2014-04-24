@@ -497,7 +497,7 @@
         stevedore/map-to-arg-string)
    ~username))
 
-(script/defimpl create-user [#{:rhel :centos :amzn-linux :smartos :fedora}]
+(script/defimpl create-user [#{:rhel :centos :amzn-linux :fedora}]
   [username options]
   ("/usr/sbin/useradd"
    ~(-> options
@@ -505,6 +505,24 @@
          (:groups options)
          (update-in [:groups] group-seq->string))
         (translate-options {:system :r :group :g :password :p :groups :G})
+        stevedore/map-to-arg-string)
+   ~username))
+
+(script/defimpl create-user [#{:smartos}]
+  [username options]
+  ("/usr/sbin/useradd"
+   ~(-> options
+        (dissoc :password :system)
+        (thread-expr/when->
+         (:groups options)
+         (update-in [:groups] group-seq->string))
+        (translate-options {:shell :s
+                            :base-dir :b
+                            :comment :c
+                            :home :d
+                            :group :g
+                            :groups :G
+                            :create-home :m})
         stevedore/map-to-arg-string)
    ~username))
 
@@ -517,7 +535,7 @@
           (update-in [:groups] group-seq->string))))
    ~username))
 
-(script/defimpl modify-user [#{:rhel :centos :amzn-linux :fedora :smartos}]
+(script/defimpl modify-user [#{:rhel :centos :amzn-linux :fedora}]
   [username options]
   ("/usr/sbin/usermod"
    ~(-> options
@@ -526,6 +544,24 @@
          (update-in [:groups] group-seq->string))
         (translate-options
          {:system :r :group :g :password :p :append :a :groups :G})
+        stevedore/map-to-arg-string)
+   ~username))
+
+(script/defimpl modify-user [#{:smartos}]
+  [username options]
+  ("/usr/sbin/usermod"
+   ~(-> options
+        (dissoc :password :system)
+        (thread-expr/when->
+         (:groups options)
+         (update-in [:groups] group-seq->string))
+        (translate-options {:shell :s
+                            :base-dir :b
+                            :comment :c
+                            :home :d
+                            :group :g
+                            :groups :G
+                            :create-home :m})
         stevedore/map-to-arg-string)
    ~username))
 
@@ -571,6 +607,28 @@
 (script/defimpl remove-group :default [groupname options]
   ("/usr/sbin/groupdel" ~(stevedore/map-to-arg-string options) ~groupname))
 
+;;; Crontab
+
+(script/defscript crontab [username & {:as options}])
+
+(script/defimpl crontab [#{:smartos}]
+  [username
+   & {:keys [action filename]
+      :or {action :create}}]
+  ~@(case action
+      :create ["su" "-" username "-c" (str \" "/usr/bin/crontab " filename \")]
+      :remove ["/usr/bin/crontab" "-r" username]))
+
+(script/defimpl crontab :default
+  [username
+   & {:keys [action filename]
+      :or {action :create}
+      :as options}]
+  ("/usr/bin/crontab"
+   ~(stevedore/map-to-arg-string
+     (cond-> {:u username}
+             (= :remove action) (assoc :r true)))
+   ~@(when filename [filename])))
 
 ;;; Package management
 

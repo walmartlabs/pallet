@@ -55,7 +55,7 @@
      (select-keys content-spec content-options))
     (exec-checked-script
      "Load crontab"
-     ("crontab" -u ~user ~in-file))))
+     (lib/crontab ~user :filename ~in-file))))
 
 (defplan remove-user-crontab
   "Remove user crontab for the specified user"
@@ -64,7 +64,7 @@
     (file in-file :action :delete)
     (exec-checked-script
      "Remove crontab"
-     ("crontab" -u ~user -r))))
+     (lib/crontab ~user :action :remove))))
 
 (defplan user-crontabs
   "Write all user crontab files."

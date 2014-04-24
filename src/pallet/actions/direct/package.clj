@@ -217,7 +217,8 @@
                              (sort-by #(apply min (map :priority (second %)))))]
         (stevedore/script
          ("pkgin"
-          ~(name action) -y
+          -y
+          ~(name action)
          ; ~(string/join " " (map #(str "--disablerepo=" %) (:disable opts)))
          ; ~(string/join " " (map #(str "--enablerepo=" %) (:enable opts)))
          ; ~(string/join " " (map #(str "--exclude=" %) (:exclude opts)))
