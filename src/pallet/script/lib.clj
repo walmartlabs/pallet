@@ -574,6 +574,9 @@
 (script/defimpl unlock-user :default [username]
   ("/usr/sbin/usermod" --unlock ~username))
 
+(script/defimpl unlock-user [#{:smartos}] [username]
+  ("/usr/bin/passwd" -d ~username))
+
 (script/defimpl user-home :default [username]
   @("getent" passwd ~username | "cut" "-d:" "-f6"))
 
