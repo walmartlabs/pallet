@@ -80,13 +80,17 @@
 
 (defn ^{:internal true} with-connection-exception-handler
   [e]
-  (logging/errorf e "SSH Error")
+  (logging/errorf e "SSH Error %s" (ex-data e))
   (if-let [{:keys [type reason]} (ex-data e)]
-    (if (and (= type :clj-ssh/open-channel-failure)
-             (= reason :clj-ssh/channel-open-failed))
+    (if (or (and (= type :clj-ssh/open-channel-failure)
+                 (= reason :clj-ssh/channel-open-failed))
+            (= type :runtime-exception)
+            (= type :remote-execution-failure))
       {::retriable true ::exception e}
       (throw e))
-    (throw e)))
+    (if (= (class e) com.jcraft.jsch.JSchException)
+      {::retriable true ::exception e}
+      (throw e))))
 
 (defn ^{:internal true} with-connection*
   "Execute a function with a connection to the current target node,"
