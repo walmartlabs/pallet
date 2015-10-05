@@ -1,4 +1,4 @@
-(defproject com.walmartlabs/pallet "0.8.0-beta1"
+(defproject com.walmartlabs/pallet "0.8.0"
   :description
   "DevOps for the JVM.
 
