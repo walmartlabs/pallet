@@ -71,12 +71,14 @@
 (defn get-connection [session]
   (transport/open
    ssh-connection (endpoint session) (authentication session)
-   {:max-tries 3}))
+   {:max-tries 3
+    :port-retries 1}))
 
 (defn release-connection [session]
   (transport/release
    ssh-connection (endpoint session) (authentication session)
-   {:max-tries 3}))
+   {:max-tries 3
+    :port-retries 1}))
 
 (defn ^{:internal true} with-connection-exception-handler
   [e]
