@@ -1,4 +1,4 @@
-(defproject com.walmartlabs/pallet "0.8.1"
+(defproject com.walmartlabs/pallet "0.8.2"
   :description
   "DevOps for the JVM.
 
@@ -12,7 +12,7 @@ unprecedented level of customization."
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :scm {:url "git@github.com:pallet/pallet.git"}
 
-  :dependencies [[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/core.incubator "0.1.0"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.clojure/tools.macro "0.1.1"]
@@ -25,7 +25,7 @@ unprecedented level of customization."
                   :exclusions [com.palletops/pallet]]
                  [com.palletops/script-exec "0.4.0"]
                  [com.palletops/stevedore "0.8.0-beta.5"]
-                 [clj-ssh "0.5.10"]
+                 [clj-ssh "0.5.14"]
                  [enlive "1.0.1"
                   :exclusions [org.clojure/clojure]]
                  [pallet-fsmop "0.3.1"]
