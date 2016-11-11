@@ -226,7 +226,7 @@
     (when (= target-count ::not-specified)
       (throw
        (ex-info
-        (format "Node :count not specified for group: %s" group)
+        (format "Node :count not specified for group: %s" (:group-name group))
         {:reason :target-count-not-specified
          :group group})))
     {:actual existing-count :target target-count
