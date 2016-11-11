@@ -226,7 +226,7 @@ of user options.
         (IllegalArgumentException.
          (format
           "Attempting to implement action %s with invalid dispatch value %s"
-          (action-symbol action) dispatch-val)))))
+          (action-symbol action))))))
     (add-action-implementation! action dispatch-val metadata f)))
 
 (defmacro implement-action
